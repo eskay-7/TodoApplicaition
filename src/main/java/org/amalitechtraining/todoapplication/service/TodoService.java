@@ -1,13 +1,14 @@
 package org.amalitechtraining.todoapplication.service;
 
-import org.amalitechtraining.todoapplication.entity.Todo;
+import org.amalitechtraining.todoapplication.dto.request.TodoRequest;
+import org.amalitechtraining.todoapplication.dto.response.TodoDto;
 
 import java.util.List;
 
 public interface TodoService {
-    List<Todo> getAllTodos();
-    Todo getTodo(Long id);
-    Todo createTodo(Todo todo);
-    Todo updateTodo(Long id, Todo todoUpdate);
+    List<TodoDto> getAllTodos();
+    TodoDto getTodo(Long id);
+    TodoDto createTodo(TodoRequest todoRequest);
+    TodoDto markAsCompleted (Long id);
     void deleteTodo(Long id);
 }
