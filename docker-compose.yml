@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: todo-postgres-db
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: seth
+      POSTGRES_PASSWORD: kuasi7
+      PGDATA: /data/postgres
+    networks:
+      - todo_db_net
+    volumes:
+      - todo_db_volume:/data/postgres
+    ports:
+      - "2025:5432"
+    restart: unless-stopped
+
+networks:
+  todo_db_net:
+    driver: bridge
+volumes:
+  todo_db_volume:
