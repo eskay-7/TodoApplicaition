@@ -1,7 +1,9 @@
 package org.amalitechtraining.todoapplication.service;
 
 import org.amalitechtraining.todoapplication.dto.request.PasswordUpdateRequest;
+import org.amalitechtraining.todoapplication.dto.request.TodoRequest;
 import org.amalitechtraining.todoapplication.dto.request.UserRequest;
+import org.amalitechtraining.todoapplication.dto.response.TodoDto;
 import org.amalitechtraining.todoapplication.dto.response.UserDto;
 import org.amalitechtraining.todoapplication.entity.User;
 import org.amalitechtraining.todoapplication.exception.ResourceNotFoundException;
@@ -19,12 +21,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserDtoMapper dtoMapper;
     private final UserRequestMapper requestMapper;
+    private final TodoService todoService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserDtoMapper dtoMapper, UserRequestMapper requestMapper) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserDtoMapper dtoMapper,
+            UserRequestMapper requestMapper,
+            TodoService todoService
+    ) {
         this.userRepository = userRepository;
         this.dtoMapper = dtoMapper;
         this.requestMapper = requestMapper;
+        this.todoService = todoService;
     }
 
     @Override
@@ -57,7 +66,7 @@ public class UserServiceImpl implements UserService {
                         "User with id '%d' not found, check and try again".formatted(id)));
 
         verifyOldPassword(user,request);
-        user.setPassword(request.newPassword());
+        user.setPassword(request.new_password());
         userRepository.save(user);
     }
 
@@ -79,8 +88,24 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public List<TodoDto> getUserTodos(Long id) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with id '%d' not found, check and try again".formatted(id)));
+        return todoService.getUserTodos(user);
+    }
+
+    @Override
+    public TodoDto createTodo(Long id, TodoRequest request) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with id '%d' not found, check and try again".formatted(id)));
+        return todoService.createTodoForUser(user, request);
+    }
+
     private void verifyOldPassword (User user, PasswordUpdateRequest request) {
-        if (!user.getPassword().equals(request.oldPassword()))
+        if (!user.getPassword().equals(request.old_password()))
             throw new IllegalArgumentException("Sorry, you provided the wrong old password");
     }
 

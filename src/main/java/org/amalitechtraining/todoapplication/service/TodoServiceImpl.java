@@ -3,6 +3,7 @@ package org.amalitechtraining.todoapplication.service;
 import org.amalitechtraining.todoapplication.dto.request.TodoRequest;
 import org.amalitechtraining.todoapplication.dto.response.TodoDto;
 import org.amalitechtraining.todoapplication.entity.Todo;
+import org.amalitechtraining.todoapplication.entity.User;
 import org.amalitechtraining.todoapplication.exception.ResourceNotFoundException;
 import org.amalitechtraining.todoapplication.mapper.TodoDtoMapper;
 import org.amalitechtraining.todoapplication.mapper.TodoRequestMapper;
@@ -65,12 +66,38 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
+    public TodoDto toggleCompletedStatus(Long id, boolean isComplete) {
+        var todoInDB = todoRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Todo with id '%d' not found, check and try again".formatted(id)));
+        todoInDB.setCompleted(isComplete);
+        return dtoMapper.apply(todoRepository.save(todoInDB));
+    }
+
+    @Override
     public void deleteTodo(Long id) {
         todoRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Todo with id '%d' not found, check and try again".formatted(id)));
         todoRepository.deleteById(id);
+    }
+
+    @Override
+    public List<TodoDto> getUserTodos(User user) {
+        return todoRepository
+                .findByOwner(user)
+                .stream()
+                .map(dtoMapper)
+                .toList();
+    }
+
+    @Override
+    public TodoDto createTodoForUser(User user, TodoRequest request) {
+        var todo = requestMapper.apply(request);
+        user.addTodo(todo);
+        return dtoMapper.apply(todoRepository.save(todo));
     }
 
     private void mapUpdateTodo(Todo original, TodoRequest update) {

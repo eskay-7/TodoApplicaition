@@ -1,8 +1,12 @@
 package org.amalitechtraining.todoapplication.controller;
 
+import jakarta.validation.Valid;
 import org.amalitechtraining.todoapplication.dto.request.PasswordUpdateRequest;
+import org.amalitechtraining.todoapplication.dto.request.TodoRequest;
 import org.amalitechtraining.todoapplication.dto.request.UserRequest;
+import org.amalitechtraining.todoapplication.dto.response.TodoDto;
 import org.amalitechtraining.todoapplication.dto.response.UserDto;
+import org.amalitechtraining.todoapplication.service.TodoService;
 import org.amalitechtraining.todoapplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserRequest user) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserRequest user) {
         var createdUser = userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
@@ -52,7 +56,7 @@ public class UserController {
     @PutMapping("{id}/password")
     public ResponseEntity<?> updatePassword(
             @PathVariable Long id,
-            @RequestBody PasswordUpdateRequest request
+            @RequestBody @Valid PasswordUpdateRequest request
     ) {
         userService.updatePassword(id,request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -63,4 +67,20 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("{id}/todos")
+    public ResponseEntity<List<TodoDto>> getUserTodos(@PathVariable Long id) {
+        var todos = userService.getUserTodos(id);
+        return ResponseEntity.ok(todos);
+    }
+
+    @PostMapping("{id}/todos")
+    public ResponseEntity<TodoDto> createTodo(
+            @PathVariable Long id,
+            @RequestBody @Valid TodoRequest request
+    ) {
+        var createdTodo = userService.createTodo(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
+    }
+
 }

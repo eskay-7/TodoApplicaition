@@ -5,12 +5,12 @@ import jakarta.validation.constraints.Size;
 
 public record PasswordUpdateRequest (
 
-        @NotBlank(message = "Old password field cannot be empty")
-        @Size(min = 8, max = 50, message = "Password must have a length between 8 and 50")
-        String oldPassword,
+        @NotBlank(message = "old_password field cannot be empty")
+        @Size(min = 8, max = 50, message = "old_password must have a length between 8 and 50 chars")
+        String old_password,
 
-        @NotBlank(message = "New password field cannot be empty")
-        @Size(min = 8, max = 50, message = "Password must have a length between 8 and 50")
-        String newPassword
+        @NotBlank(message = "new_password field cannot be empty")
+        @Size(min = 8, max = 50, message = "new_password must have a length between 8 and 50 chars")
+        String new_password
 ) {
 }

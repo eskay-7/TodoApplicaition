@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import java.sql.Timestamp;
 
 public record ExceptionResponse(
-        HttpStatus status,
+        int status,
+        HttpStatus error,
         String message,
         Timestamp timestamp
 ) {

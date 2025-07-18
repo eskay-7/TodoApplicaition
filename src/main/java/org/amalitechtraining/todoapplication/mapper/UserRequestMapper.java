@@ -13,11 +13,11 @@ public class UserRequestMapper implements Function<UserRequest, User> {
     @Override
     public User apply(UserRequest userRequest) {
          return User.builder()
-                    .firstName(userRequest.firstName())
-                    .lastName(userRequest.lastName())
+                    .firstName(userRequest.first_name())
+                    .lastName(userRequest.last_name())
                     .gender(Gender.valueOf(
                             userRequest.gender().toUpperCase()))
-                    .dateOfBirth(LocalDate.parse(userRequest.dateOfBirth()))
+                    .dateOfBirth((userRequest.date_of_birth()))
                     .email(userRequest.email())
                     .password(userRequest.password())
                     .build();

@@ -12,7 +12,7 @@ services:
     volumes:
       - todo_db_volume:/data/postgres
     ports:
-      - "2025:5432"
+      - "5432:5432"
     restart: unless-stopped
 
 networks:

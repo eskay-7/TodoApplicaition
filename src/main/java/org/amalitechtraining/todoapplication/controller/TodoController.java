@@ -1,8 +1,8 @@
 package org.amalitechtraining.todoapplication.controller;
 
+import jakarta.validation.Valid;
 import org.amalitechtraining.todoapplication.dto.request.TodoRequest;
 import org.amalitechtraining.todoapplication.dto.response.TodoDto;
-import org.amalitechtraining.todoapplication.entity.Todo;
 import org.amalitechtraining.todoapplication.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseEntity<TodoDto> createTodo(@RequestBody TodoRequest todo) {
+    public ResponseEntity<TodoDto> createTodo(@RequestBody @Valid TodoRequest todo) {
         var createdTodo = todoService.createTodo(todo);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
     }
@@ -49,11 +49,20 @@ public class TodoController {
 //        return ResponseEntity.ok(updatedTodo);
 //    }
 
-    @PutMapping("{id}/complete")
+    @PatchMapping ("{id}/complete")
     public ResponseEntity<TodoDto> markAsCompleted(@PathVariable Long id) {
         var updatedTodo = todoService.markAsCompleted(id);
         return ResponseEntity.ok(updatedTodo);
     }
+
+    @PatchMapping ("{id}")
+    public ResponseEntity<TodoDto> toggleCompletedStatus(
+            @PathVariable Long id,
+            @RequestParam(value = "completed") boolean isComplete) {
+        var updatedTodo = todoService.toggleCompletedStatus(id,isComplete);
+        return ResponseEntity.ok(updatedTodo);
+    }
+
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteTodo(@PathVariable Long id) {
